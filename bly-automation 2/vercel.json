@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/webhooks/:path*", "destination": "/api" },
+    { "source": "/admin/:path*", "destination": "/api" },
+    { "source": "/health", "destination": "/api" }
+  ],
+  "crons": [
+    { "path": "/api/cron/pix-reminders", "schedule": "0 * * * *" },
+    { "path": "/api/cron/tracking-check", "schedule": "0 */2 * * *" }
+  ]
+}

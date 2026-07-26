@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BLY! Automation - Painel</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<!-- ==== TELA DE LOGIN / CADASTRO ==== -->
+<div id="auth-screen">
+  <div class="auth-card glass">
+    <div class="auth-logo">✦ Automation</div>
+    <div class="auth-subtitle" id="auth-subtitle">Entre na sua conta pra gerenciar sua marca</div>
+
+    <div id="auth-error" class="error-msg hidden"></div>
+
+    <form id="login-form">
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="login-email" required autocomplete="email" />
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="login-password" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+
+    <form id="register-form" class="hidden">
+      <div class="field">
+        <label>Nome da sua marca</label>
+        <input type="text" id="register-brand" required placeholder="Ex: BLY! Joias" />
+      </div>
+      <div class="field">
+        <label>Seu nome</label>
+        <input type="text" id="register-name" />
+      </div>
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="register-email" required autocomplete="email" />
+      </div>
+      <div class="field">
+        <label>Senha (mínimo 8 caracteres)</label>
+        <input type="password" id="register-password" required autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn btn-primary">Criar conta</button>
+    </form>
+
+    <div class="auth-switch">
+      <span id="switch-to-register-wrap">Não tem conta? <a id="switch-to-register">Cadastrar marca</a></span>
+      <span id="switch-to-login-wrap" class="hidden">Já tem conta? <a id="switch-to-login">Entrar</a></span>
+    </div>
+  </div>
+</div>
+
+<!-- ==== APP (depois de logado) ==== -->
+<div id="app-shell" class="hidden">
+  <aside class="sidebar glass">
+    <div class="sidebar-brand" id="brand-name">✦ Marca</div>
+    <nav>
+      <div class="nav-item active" data-page="overview">📊 Visão geral</div>
+      <div class="nav-item" data-page="leads">👥 Leads</div>
+      <div class="nav-item" data-page="orders">📦 Pedidos</div>
+      <div class="nav-item" data-page="conversations">💬 Conversas</div>
+      <div class="nav-item" data-page="campaigns">📣 Disparos</div>
+      <div class="nav-item" data-page="settings">⚙️ Configurações</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="theme-toggle">
+        <span>Modo escuro</span>
+        <label class="switch">
+          <input type="checkbox" id="theme-switch" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <button class="btn btn-secondary" id="logout-btn">Sair</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <section id="page-overview" class="page">
+      <div class="page-header">
+        <div>
+          <h1>Visão geral</h1>
+          <p>Resumo da sua operação</p>
+        </div>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="panel glass">
+        <h2>Bem-vindo(a) 👋</h2>
+        <p class="help-text">Comece configurando as integrações da sua marca em <strong>Configurações</strong>, depois acompanhe leads e pedidos por aqui.</p>
+      </div>
+    </section>
+
+    <section id="page-leads" class="page hidden">
+      <div class="page-header">
+        <div><h1>Leads</h1><p>Todos os contatos da sua marca</p></div>
+        <input type="text" id="leads-search" placeholder="Buscar por nome, e-mail ou telefone..." style="max-width:280px;padding:10px 14px;border-radius:10px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.4);" />
+      </div>
+      <div class="panel glass">
+        <table>
+          <thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Desde</th></tr></thead>
+          <tbody id="leads-table-body"></tbody>
+        </table>
+        <div id="leads-empty" class="empty-state hidden">Nenhum lead ainda. Assim que a Shopify sincronizar, eles aparecem aqui.</div>
+      </div>
+    </section>
+
+    <section id="page-orders" class="page hidden">
+      <div class="page-header"><div><h1>Pedidos</h1><p>Status de pagamento e entrega</p></div></div>
+      <div class="panel glass">
+        <table>
+          <thead><tr><th>Pedido</th><th>Cliente</th><th>Valor</th><th>Pagamento</th><th>Entrega</th><th>Rastreio</th></tr></thead>
+          <tbody id="orders-table-body"></tbody>
+        </table>
+        <div id="orders-empty" class="empty-state hidden">Nenhum pedido ainda.</div>
+      </div>
+    </section>
+
+    <section id="page-conversations" class="page hidden">
+      <div class="page-header"><div><h1>Conversas</h1><p>Mensagens recebidas via WhatsApp</p></div></div>
+      <div class="panel glass">
+        <table>
+          <thead><tr><th>Lead</th><th>Canal</th><th>Mensagem</th><th>Intenção</th><th>Quando</th></tr></thead>
+          <tbody id="conversations-table-body"></tbody>
+        </table>
+        <div id="conversations-empty" class="empty-state hidden">Nenhuma conversa ainda.</div>
+      </div>
+    </section>
+
+    <section id="page-campaigns" class="page hidden">
+      <div class="page-header"><div><h1>Disparos</h1><p>Envie uma mensagem manual pra todos os leads (ou uma lista específica)</p></div></div>
+      <div class="panel glass">
+        <div id="campaign-result" class="success-msg hidden"></div>
+        <div id="campaign-error" class="error-msg hidden"></div>
+        <div class="field">
+          <label>Canal</label>
+          <select id="campaign-channel">
+            <option value="whatsapp">WhatsApp</option>
+            <option value="email">E-mail</option>
+          </select>
+        </div>
+        <div class="field hidden" id="campaign-subject-field">
+          <label>Assunto (e-mail)</label>
+          <input type="text" id="campaign-subject" placeholder="Ex: Novidades da coleção" />
+        </div>
+        <div class="field">
+          <label>Mensagem</label>
+          <textarea id="campaign-message" rows="5" placeholder="Use {{nome}} pra personalizar com o nome do lead"></textarea>
+          <div class="help-text">Dica: {{nome}} vira o primeiro nome de cada lead automaticamente.</div>
+        </div>
+        <button class="btn btn-primary" id="campaign-send-btn" style="width:auto;">Disparar pra todos os leads</button>
+      </div>
+    </section>
+
+    <section id="page-settings" class="page hidden">
+      <div class="page-header"><div><h1>Configurações</h1><p>Credenciais das integrações da sua marca</p></div></div>
+
+      <div id="settings-saved" class="success-msg hidden">Configurações salvas!</div>
+
+      <div class="panel glass">
+        <h2>URLs de webhook desta marca</h2>
+        <p class="help-text">Use essas URLs ao configurar os webhooks na Shopify, Meta e Mercado Pago:</p>
+        <div id="webhook-urls" style="font-family:monospace;font-size:12px;line-height:1.8;"></div>
+      </div>
+
+      <form id="settings-form">
+        <div class="panel glass">
+          <div class="section-divider">Shopify</div>
+          <div class="form-grid">
+            <div class="field"><label>Domínio da loja</label><input type="text" name="shopify_store_domain" placeholder="minhamarca.myshopify.com" /></div>
+            <div class="field"><label>Admin API Token</label><input type="password" name="shopify_admin_api_token" /></div>
+            <div class="field"><label>Webhook Secret</label><input type="password" name="shopify_webhook_secret" /></div>
+          </div>
+        </div>
+
+        <div class="panel glass">
+          <div class="section-divider">WhatsApp Cloud API</div>
+          <div class="form-grid">
+            <div class="field"><label>Phone Number ID</label><input type="text" name="whatsapp_phone_number_id" /></div>
+            <div class="field"><label>Access Token</label><input type="password" name="whatsapp_access_token" /></div>
+            <div class="field"><label>Verify Token</label><input type="text" name="whatsapp_verify_token" /></div>
+            <div class="field"><label>App Secret</label><input type="password" name="whatsapp_app_secret" /></div>
+          </div>
+        </div>
+
+        <div class="panel glass">
+          <div class="section-divider">Mercado Pago</div>
+          <div class="form-grid">
+            <div class="field"><label>Access Token</label><input type="password" name="mp_access_token" /></div>
+            <div class="field"><label>Webhook Secret</label><input type="password" name="mp_webhook_secret" /></div>
+          </div>
+        </div>
+
+        <div class="panel glass">
+          <div class="section-divider">E-mail (SMTP)</div>
+          <div class="form-grid">
+            <div class="field"><label>Host SMTP</label><input type="text" name="smtp_host" /></div>
+            <div class="field"><label>Porta</label><input type="number" name="smtp_port" value="465" /></div>
+            <div class="field"><label>Usuário</label><input type="text" name="smtp_user" /></div>
+            <div class="field"><label>Senha</label><input type="password" name="smtp_pass" /></div>
+            <div class="field"><label>Remetente (nome + e-mail)</label><input type="text" name="email_from" placeholder='"Sua Marca" <contato@suamarca.com>' /></div>
+          </div>
+        </div>
+
+        <div class="panel glass">
+          <div class="section-divider">IA (Claude + transcrição de áudio)</div>
+          <div class="form-grid">
+            <div class="field"><label>Anthropic API Key</label><input type="password" name="anthropic_api_key" /></div>
+            <div class="field"><label>Transcription API Key</label><input type="password" name="transcription_api_key" /></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:auto;">Salvar configurações</button>
+      </form>
+    </section>
+
+  </main>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
